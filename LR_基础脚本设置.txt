@@ -38,7 +38,7 @@ Action()
 	//集合点通过信息
 	lr_output_message("集合点通过，开始登录");
 	//登录请求
-	lr_start_transaction("登录");
+	lr_start_transaction("bind");
 	//获取随后的请求中的响应内容
 	web_reg_save_param("OriResponseBody", 
 					   "LB=explanation\":\"", 
@@ -72,12 +72,13 @@ Action()
 	if( strcmp(result_a,"成功") == 0)
 	{		
 		lr_output_message("pass");
+		lr_end_transaction("bind",LR_PASS);
 	}
 	else
 	{
 		lr_output_message("failed,断言失败");
 		lr_output_message(result_a);
-		lr_end_transaction("登录",LR_FAIL);
+		lr_end_transaction("bind",LR_FAIL);
         //return 0,1,2...时,程序执行到此处，仅跳出当前Action，当前Action中后续代码不执行。
 		//return -1时,程序执行到此处，跳出所有Action和迭代,但会执行vuser_end。
 		// exit(-1),后直接终止迭代停止程序运行，后续代码均不执行
@@ -85,6 +86,7 @@ Action()
 	}
 
 
+	lr_start_transaction("mobilefwd");
 	web_custom_request("mobilefwd", 
 		"URL=http://{host}/mobile/mobilefwd?verifycontent={deviceid}", 
 		"Method=POST", 
@@ -96,8 +98,10 @@ Action()
 		"EncType=text/plain; charset=UTF-8", 
 		"Body={\"version\":14,\"deviceinfo\":{\"brand\":\"Xiaomi\",\"manufacture\":\"Xiaomi\",\"model\":\"MI 3W\",\"sysversion\":\"6.0.1\",\"hardware\":\"qcom\"}}", 
 		LAST);
+	lr_end_transaction("mobilefwd",LR_AUTO);
 
 
+	lr_start_transaction("division");
 	web_custom_request("division", 
 		"URL=http://{host}/mobile/division?verifycontent={deviceid}", 
 		"Method=POST", 
@@ -109,8 +113,10 @@ Action()
 		"EncType=text/plain; charset=utf-8", 
 		"Body={\"version\":0}", 
 		LAST);
+	lr_end_transaction("division",LR_AUTO);
 
 
+	lr_start_transaction("functionred");
 	web_custom_request("functionred", 
 		"URL=http://{host}/mobile/functionred?verifycontent={deviceid}", 
 		"Method=POST", 
@@ -122,8 +128,10 @@ Action()
 		"EncType=text/plain; charset=UTF-8", 
 		"Body={}", 
 		LAST);
+	lr_end_transaction("functionred",LR_AUTO);
 
 
+	lr_start_transaction("division_2");
 	web_custom_request("division_2", 
 		"URL=http://{host}/mobile/division?verifycontent={deviceid}", 
 		"Method=POST", 
@@ -135,8 +143,10 @@ Action()
 		"EncType=text/plain; charset=utf-8", 
 		"Body={\"version\":1}", 
 		LAST);
+	lr_end_transaction("division_2",LR_AUTO);
 
 
+	lr_start_transaction("type");
 	web_custom_request("type", 
 		"URL=http://{host}/mobile/assistlog/type?verifycontent={deviceid}", 
 		"Method=POST", 
@@ -148,8 +158,10 @@ Action()
 		"EncType=text/plain; charset=utf-8", 
 		"Body={}", 
 		LAST);
+	lr_end_transaction("type",LR_AUTO);
 
 
+	lr_start_transaction("helpunit");
 	web_custom_request("helpunit", 
 		"URL=http://{host}/mobile/helpunit?verifycontent={deviceid}", 
 		"Method=POST", 
@@ -161,8 +173,10 @@ Action()
 		"EncType=text/plain; charset=utf-8", 
 		"Body={\"version\":0}", 
 		LAST);
+	lr_end_transaction("helpunit",LR_AUTO);
 
 
+	lr_start_transaction("functionarea");
 	web_custom_request("functionarea", 
 		"URL=http://{host}/mobile/functionarea?verifycontent={deviceid}", 
 		"Method=POST", 
@@ -174,8 +188,10 @@ Action()
 		"EncType=text/plain; charset=utf-8", 
 		"Body={\"functioncode\":1}", 
 		LAST);
+	lr_end_transaction("functionarea",LR_AUTO);
 
 
+	lr_start_transaction("holidaylist");
 	web_custom_request("holidaylist", 
 		"URL=http://{host}/mobile/holidaylist?verifycontent={deviceid}", 
 		"Method=POST", 
@@ -187,8 +203,10 @@ Action()
 		"EncType=text/plain; charset=utf-8", 
 		"Body={\"startyear\":2016,\"endyear\":2020}", 
 		LAST);
+	lr_end_transaction("holidaylist",LR_AUTO);
 
 
+	lr_start_transaction("function");
 	web_custom_request("function", 
 		"URL=http://{host}/mobile/function?verifycontent={deviceid}", 
 		"Method=POST", 
@@ -200,8 +218,10 @@ Action()
 		"EncType=text/plain; charset=utf-8", 
 		"Body={}", 
 		LAST);
+	lr_end_transaction("function",LR_AUTO);
 
 
+	lr_start_transaction("pstatus");
 	web_custom_request("pstatus", 
 		"URL=http://{host}/mobile/poverty/pstatus?verifycontent={deviceid}", 
 		"Method=POST", 
@@ -213,8 +233,10 @@ Action()
 		"EncType=text/plain; charset=utf-8", 
 		"Body={\"code\":\"150422000000\"}", 
 		LAST);
+	lr_end_transaction("pstatus",LR_AUTO);
 
 
+	lr_start_transaction("addressbook");
 	web_custom_request("addressbook", 
 		"URL=http://{host}/mobile/addressbook?verifycontent={deviceid}", 
 		"Method=POST", 
@@ -226,8 +248,10 @@ Action()
 		"EncType=text/plain; charset=utf-8", 
 		"Body={\"version\":0}", 
 		LAST);
+	lr_end_transaction("addressbook",LR_AUTO);
 
 
+	lr_start_transaction("functionred_2");
 	web_custom_request("functionred_2", 
 		"URL=http://{host}/mobile/functionred?verifycontent={deviceid}", 
 		"Method=POST", 
@@ -239,8 +263,8 @@ Action()
 		"EncType=text/plain; charset=UTF-8", 
 		"Body={\"function\":[0,1,2,3,5,6,7,8,9]}", 
 		LAST);
+	lr_end_transaction("functionred_2",LR_AUTO);
 
-	lr_end_transaction("登录",LR_AUTO);
 
 	return 0;
 }
