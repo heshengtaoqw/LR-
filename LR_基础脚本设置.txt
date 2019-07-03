@@ -1,0 +1,246 @@
+Action()
+{
+		
+	char HttpRetCode;
+	char * ip ;
+	char * result_a;
+
+    ip = lr_get_vuser_ip();
+
+	if (ip)
+		{lr_output_message("当前虚拟用户使用的IP为： %s", ip);}
+	else
+		{lr_output_message("[enable IP spoofing ]选项没有被启用！");}
+
+	web_add_cookie("inst=null; DOMAIN=10.31.0.251");
+
+
+	//使用IP欺骗
+    HttpRetCode = web_get_int_property(HTTP_INFO_RETURN_CODE);
+	//调试模式不会使用ip欺骗，若使用ip欺骗，需在controller中设置ip欺骗，并启用，且在专家模式中设置为每个process都使用ip欺骗
+	if (HttpRetCode == 200 )
+	{
+			lr_output_message("当前虚拟用户使用的IP为： %s", ip);
+	}
+	else
+	{
+			lr_output_message("[enable IP spoofing ]选项没有被启用！");
+	}
+
+
+	//设置集合点，在调试模式中不会有多用户，所以没有集合点，若需使用集合点，需在controller中启用集合点且代码中有集合点，且在专家模式中设置为以process为单位跑性能脚本
+	//常见错误：Socket description not found
+	// 解决方法：
+	// 1. 根据错误提示，在run-time setting中的Miscellaneous项中设置“run vuser as a process”
+	// 2. 在...\Program Files (x86)\HP\LoadRunner\dat\mdrv.dat  查找[lr_socks] 在后面添加“ ExtCmdLineConc=-UsingWinInet Yes ”
+	// 3. 在Diagnostics->configuration中，点掉 Enable the following diagnostics
+	lr_rendezvous("设置集合点同时登陆");
+	//集合点通过信息
+	lr_output_message("集合点通过，开始登录");
+	//登录请求
+	lr_start_transaction("登录");
+	//获取随后的请求中的响应内容
+	web_reg_save_param("OriResponseBody", 
+					   "LB=explanation\":\"", 
+					   "RB=\"}", 
+					   LAST);
+
+
+	//发送绑定请求
+	web_custom_request("bind", 
+		"URL=http://{host}/mobile/bind", 
+		"Method=POST", 
+		"Resource=0", 
+		"RecContentType=text/json", 
+		"Referer=", 
+		"Snapshot=t2.inf", 
+		"Mode=HTML", 
+		"EncType=text/plain; charset=UTF-8", 
+		"Body={\"cellphone\":\"{cellphone}\",\"verifycode\":\"5555\",\"deviceid\":\"{deviceid}\",\"brand\":\"Xiaomi\",\"phoneos\":0,\"model\":\"MI 3W\",\"sysversion\":\"6.0.1\"}", 
+		LAST);
+
+
+	//将响应中的乱码转为UTF-8格式
+	lr_convert_string_encoding(lr_eval_string("{OriResponseBody}"),LR_ENC_UTF8 ,LR_ENC_SYSTEM_LOCALE,"ResponseBodyUTF8");
+	//去掉转汉字之后的\x00
+	lr_save_string(lr_eval_string("{ResponseBodyUTF8}"),"ExResponseBody");
+	//赋值给result_a,在脚本中定义的变量，可以直接使用变量名引用。其他通过函数获得的变量，则需使用lr_eval_string("{ExResponseBody}")使用
+	result_a = lr_eval_string("{ExResponseBody}");
+	
+	
+	//通过strcmp函数判断响应内容，strcmp返回0则为真，确保该请求能获取正确的响应内容。如果断言失败则执行return 0，退出当前action
+	if( strcmp(result_a,"成功") == 0)
+	{		
+		lr_output_message("pass");
+	}
+	else
+	{
+		lr_output_message("failed,断言失败");
+		lr_output_message(result_a);
+		lr_end_transaction("登录",LR_FAIL);
+        //return 0,1,2...时,程序执行到此处，仅跳出当前Action，当前Action中后续代码不执行。
+		//return -1时,程序执行到此处，跳出所有Action和迭代,但会执行vuser_end。
+		// exit(-1),后直接终止迭代停止程序运行，后续代码均不执行
+		return 0;
+	}
+
+
+	web_custom_request("mobilefwd", 
+		"URL=http://{host}/mobile/mobilefwd?verifycontent={deviceid}", 
+		"Method=POST", 
+		"Resource=0", 
+		"RecContentType=text/json", 
+		"Referer=", 
+		"Snapshot=t3.inf", 
+		"Mode=HTML", 
+		"EncType=text/plain; charset=UTF-8", 
+		"Body={\"version\":14,\"deviceinfo\":{\"brand\":\"Xiaomi\",\"manufacture\":\"Xiaomi\",\"model\":\"MI 3W\",\"sysversion\":\"6.0.1\",\"hardware\":\"qcom\"}}", 
+		LAST);
+
+
+	web_custom_request("division", 
+		"URL=http://{host}/mobile/division?verifycontent={deviceid}", 
+		"Method=POST", 
+		"Resource=0", 
+		"RecContentType=text/json", 
+		"Referer=", 
+		"Snapshot=t4.inf", 
+		"Mode=HTML", 
+		"EncType=text/plain; charset=utf-8", 
+		"Body={\"version\":0}", 
+		LAST);
+
+
+	web_custom_request("functionred", 
+		"URL=http://{host}/mobile/functionred?verifycontent={deviceid}", 
+		"Method=POST", 
+		"Resource=0", 
+		"RecContentType=text/json", 
+		"Referer=", 
+		"Snapshot=t5.inf", 
+		"Mode=HTML", 
+		"EncType=text/plain; charset=UTF-8", 
+		"Body={}", 
+		LAST);
+
+
+	web_custom_request("division_2", 
+		"URL=http://{host}/mobile/division?verifycontent={deviceid}", 
+		"Method=POST", 
+		"Resource=0", 
+		"RecContentType=text/json", 
+		"Referer=", 
+		"Snapshot=t6.inf", 
+		"Mode=HTML", 
+		"EncType=text/plain; charset=utf-8", 
+		"Body={\"version\":1}", 
+		LAST);
+
+
+	web_custom_request("type", 
+		"URL=http://{host}/mobile/assistlog/type?verifycontent={deviceid}", 
+		"Method=POST", 
+		"Resource=0", 
+		"RecContentType=text/json", 
+		"Referer=", 
+		"Snapshot=t7.inf", 
+		"Mode=HTML", 
+		"EncType=text/plain; charset=utf-8", 
+		"Body={}", 
+		LAST);
+
+
+	web_custom_request("helpunit", 
+		"URL=http://{host}/mobile/helpunit?verifycontent={deviceid}", 
+		"Method=POST", 
+		"Resource=0", 
+		"RecContentType=text/json", 
+		"Referer=", 
+		"Snapshot=t8.inf", 
+		"Mode=HTML", 
+		"EncType=text/plain; charset=utf-8", 
+		"Body={\"version\":0}", 
+		LAST);
+
+
+	web_custom_request("functionarea", 
+		"URL=http://{host}/mobile/functionarea?verifycontent={deviceid}", 
+		"Method=POST", 
+		"Resource=0", 
+		"RecContentType=text/json", 
+		"Referer=", 
+		"Snapshot=t9.inf", 
+		"Mode=HTML", 
+		"EncType=text/plain; charset=utf-8", 
+		"Body={\"functioncode\":1}", 
+		LAST);
+
+
+	web_custom_request("holidaylist", 
+		"URL=http://{host}/mobile/holidaylist?verifycontent={deviceid}", 
+		"Method=POST", 
+		"Resource=0", 
+		"RecContentType=text/json", 
+		"Referer=", 
+		"Snapshot=t10.inf", 
+		"Mode=HTML", 
+		"EncType=text/plain; charset=utf-8", 
+		"Body={\"startyear\":2016,\"endyear\":2020}", 
+		LAST);
+
+
+	web_custom_request("function", 
+		"URL=http://{host}/mobile/function?verifycontent={deviceid}", 
+		"Method=POST", 
+		"Resource=0", 
+		"RecContentType=text/json", 
+		"Referer=", 
+		"Snapshot=t11.inf", 
+		"Mode=HTML", 
+		"EncType=text/plain; charset=utf-8", 
+		"Body={}", 
+		LAST);
+
+
+	web_custom_request("pstatus", 
+		"URL=http://{host}/mobile/poverty/pstatus?verifycontent={deviceid}", 
+		"Method=POST", 
+		"Resource=0", 
+		"RecContentType=text/json", 
+		"Referer=", 
+		"Snapshot=t12.inf", 
+		"Mode=HTML", 
+		"EncType=text/plain; charset=utf-8", 
+		"Body={\"code\":\"150422000000\"}", 
+		LAST);
+
+
+	web_custom_request("addressbook", 
+		"URL=http://{host}/mobile/addressbook?verifycontent={deviceid}", 
+		"Method=POST", 
+		"Resource=0", 
+		"RecContentType=text/json", 
+		"Referer=", 
+		"Snapshot=t13.inf", 
+		"Mode=HTML", 
+		"EncType=text/plain; charset=utf-8", 
+		"Body={\"version\":0}", 
+		LAST);
+
+
+	web_custom_request("functionred_2", 
+		"URL=http://{host}/mobile/functionred?verifycontent={deviceid}", 
+		"Method=POST", 
+		"Resource=0", 
+		"RecContentType=text/json", 
+		"Referer=", 
+		"Snapshot=t14.inf", 
+		"Mode=HTML", 
+		"EncType=text/plain; charset=UTF-8", 
+		"Body={\"function\":[0,1,2,3,5,6,7,8,9]}", 
+		LAST);
+
+	lr_end_transaction("登录",LR_AUTO);
+
+	return 0;
+}
