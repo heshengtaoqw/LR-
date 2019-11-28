@@ -8,45 +8,50 @@ Action()
     ip = lr_get_vuser_ip();
 
 	if (ip)
-		{lr_output_message("µ±Ç°ĞéÄâÓÃ»§Ê¹ÓÃµÄIPÎª£º %s", ip);}
+		{lr_output_message("å½“å‰è™šæ‹Ÿç”¨æˆ·ä½¿ç”¨çš„IPä¸ºï¼š %s", ip);}
 	else
-		{lr_output_message("[enable IP spoofing ]Ñ¡ÏîÃ»ÓĞ±»ÆôÓÃ£¡");}
+		{lr_output_message("[enable IP spoofing ]é€‰é¡¹æ²¡æœ‰è¢«å¯ç”¨ï¼");}
 
 	web_add_cookie("inst=null; DOMAIN=10.31.0.251");
 
 
-	//Ê¹ÓÃIPÆÛÆ­
+	//ä½¿ç”¨IPæ¬ºéª—
     HttpRetCode = web_get_int_property(HTTP_INFO_RETURN_CODE);
-	//µ÷ÊÔÄ£Ê½²»»áÊ¹ÓÃipÆÛÆ­£¬ÈôÊ¹ÓÃipÆÛÆ­£¬ĞèÔÚcontrollerÖĞÉèÖÃipÆÛÆ­£¬²¢ÆôÓÃ£¬ÇÒÔÚ×¨¼ÒÄ£Ê½ÖĞÉèÖÃÎªÃ¿¸öprocess¶¼Ê¹ÓÃipÆÛÆ­
+	//è°ƒè¯•æ¨¡å¼ä¸ä¼šä½¿ç”¨ipæ¬ºéª—ï¼Œè‹¥ä½¿ç”¨ipæ¬ºéª—ï¼Œéœ€åœ¨controllerä¸­è®¾ç½®ipæ¬ºéª—ï¼Œå¹¶å¯ç”¨ï¼Œä¸”åœ¨ä¸“å®¶æ¨¡å¼ä¸­è®¾ç½®ä¸ºæ¯ä¸ªprocesséƒ½ä½¿ç”¨ipæ¬ºéª—
 	if (HttpRetCode == 200 )
 	{
-			lr_output_message("µ±Ç°ĞéÄâÓÃ»§Ê¹ÓÃµÄIPÎª£º %s", ip);
+			lr_output_message("å½“å‰è™šæ‹Ÿç”¨æˆ·ä½¿ç”¨çš„IPä¸ºï¼š %s", ip);
 	}
 	else
 	{
-			lr_output_message("[enable IP spoofing ]Ñ¡ÏîÃ»ÓĞ±»ÆôÓÃ£¡");
+			lr_output_message("[enable IP spoofing ]é€‰é¡¹æ²¡æœ‰è¢«å¯ç”¨ï¼");
 	}
 
 
-	//ÉèÖÃ¼¯ºÏµã£¬ÔÚµ÷ÊÔÄ£Ê½ÖĞ²»»áÓĞ¶àÓÃ»§£¬ËùÒÔÃ»ÓĞ¼¯ºÏµã£¬ÈôĞèÊ¹ÓÃ¼¯ºÏµã£¬ĞèÔÚcontrollerÖĞÆôÓÃ¼¯ºÏµãÇÒ´úÂëÖĞÓĞ¼¯ºÏµã£¬ÇÒÔÚ×¨¼ÒÄ£Ê½ÖĞÉèÖÃÎªÒÔprocessÎªµ¥Î»ÅÜĞÔÄÜ½Å±¾
-	//³£¼û´íÎó£ºSocket description not found
-	// ½â¾ö·½·¨£º
-	// 1. ¸ù¾İ´íÎóÌáÊ¾£¬ÔÚrun-time settingÖĞµÄMiscellaneousÏîÖĞÉèÖÃ¡°run vuser as a process¡±
-	// 2. ÔÚ...\Program Files (x86)\HP\LoadRunner\dat\mdrv.dat  ²éÕÒ[lr_socks] ÔÚºóÃæÌí¼Ó¡° ExtCmdLineConc=-UsingWinInet Yes ¡±
-	// 3. ÔÚDiagnostics->configurationÖĞ£¬µãµô Enable the following diagnostics
-	lr_rendezvous("ÉèÖÃ¼¯ºÏµãÍ¬Ê±µÇÂ½");
-	//¼¯ºÏµãÍ¨¹ıĞÅÏ¢
-	lr_output_message("¼¯ºÏµãÍ¨¹ı£¬¿ªÊ¼µÇÂ¼");
-	//µÇÂ¼ÇëÇó
+	//è®¾ç½®é›†åˆç‚¹ï¼Œåœ¨è°ƒè¯•æ¨¡å¼ä¸­ä¸ä¼šæœ‰å¤šç”¨æˆ·ï¼Œæ‰€ä»¥æ²¡æœ‰é›†åˆç‚¹ï¼Œè‹¥éœ€ä½¿ç”¨é›†åˆç‚¹ï¼Œéœ€åœ¨controllerä¸­å¯ç”¨é›†åˆç‚¹ä¸”ä»£ç ä¸­æœ‰é›†åˆç‚¹ï¼Œä¸”åœ¨ä¸“å®¶æ¨¡å¼ä¸­è®¾ç½®ä¸ºä»¥processä¸ºå•ä½è·‘æ€§èƒ½è„šæœ¬
+	//å¸¸è§é”™è¯¯ï¼šSocket description not found
+	// è§£å†³æ–¹æ³•ï¼š
+	// 1. æ ¹æ®é”™è¯¯æç¤ºï¼Œåœ¨run-time settingä¸­çš„Miscellaneousé¡¹ä¸­è®¾ç½®â€œrun vuser as a processâ€
+	// 2. åœ¨...\Program Files (x86)\HP\LoadRunner\dat\mdrv.dat  æŸ¥æ‰¾[lr_socks] åœ¨åé¢æ·»åŠ â€œ ExtCmdLineConc=-UsingWinInet Yes â€
+	// 3. åœ¨Diagnostics->configurationä¸­ï¼Œç‚¹æ‰ Enable the following diagnostics
+	lr_rendezvous("è®¾ç½®é›†åˆç‚¹åŒæ—¶ç™»é™†");
+	//é›†åˆç‚¹é€šè¿‡ä¿¡æ¯
+	lr_output_message("é›†åˆç‚¹é€šè¿‡ï¼Œå¼€å§‹ç™»å½•");
+	//ç™»å½•è¯·æ±‚
 	lr_start_transaction("bind");
-	//»ñÈ¡ËæºóµÄÇëÇóÖĞµÄÏìÓ¦ÄÚÈİ
+	//è·å–éšåçš„è¯·æ±‚ä¸­çš„å“åº”å†…å®¹
 	web_reg_save_param("OriResponseBody", 
-					   "LB=explanation\":\"", 
-					   "RB=\"}", 
-					   LAST);
+			   "LB=explanation\":\"", 
+			   "RB=\"}",  
+			   "Ordinal=1",
+			   "SaveOffset=9",
+			   "SaveLen=22",
+			   SEARCH_FILTERS,
+			   "ContentType=text/html",
+			   LAST);
 
 
-	//·¢ËÍ°ó¶¨ÇëÇó
+	//å‘é€ç»‘å®šè¯·æ±‚
 	web_custom_request("bind", 
 		"URL=http://{host}/mobile/bind", 
 		"Method=POST", 
@@ -60,28 +65,28 @@ Action()
 		LAST);
 
 
-	//½«ÏìÓ¦ÖĞµÄÂÒÂë×ªÎªUTF-8¸ñÊ½
+	//å°†å“åº”ä¸­çš„ä¹±ç è½¬ä¸ºUTF-8æ ¼å¼
 	lr_convert_string_encoding(lr_eval_string("{OriResponseBody}"),LR_ENC_UTF8 ,LR_ENC_SYSTEM_LOCALE,"ResponseBodyUTF8");
-	//È¥µô×ªºº×ÖÖ®ºóµÄ\x00
+	//å»æ‰è½¬æ±‰å­—ä¹‹åçš„\x00
 	lr_save_string(lr_eval_string("{ResponseBodyUTF8}"),"ExResponseBody");
-	//¸³Öµ¸øresult_a,ÔÚ½Å±¾ÖĞ¶¨ÒåµÄ±äÁ¿£¬¿ÉÒÔÖ±½ÓÊ¹ÓÃ±äÁ¿ÃûÒıÓÃ¡£ÆäËûÍ¨¹ıº¯Êı»ñµÃµÄ±äÁ¿£¬ÔòĞèÊ¹ÓÃlr_eval_string("{ExResponseBody}")Ê¹ÓÃ
+	//èµ‹å€¼ç»™result_a,åœ¨è„šæœ¬ä¸­å®šä¹‰çš„å˜é‡ï¼Œå¯ä»¥ç›´æ¥ä½¿ç”¨å˜é‡åå¼•ç”¨ã€‚å…¶ä»–é€šè¿‡å‡½æ•°è·å¾—çš„å˜é‡ï¼Œåˆ™éœ€ä½¿ç”¨lr_eval_string("{ExResponseBody}")ä½¿ç”¨
 	result_a = lr_eval_string("{ExResponseBody}");
 	
 	
-	//Í¨¹ıstrcmpº¯ÊıÅĞ¶ÏÏìÓ¦ÄÚÈİ£¬strcmp·µ»Ø0ÔòÎªÕæ£¬È·±£¸ÃÇëÇóÄÜ»ñÈ¡ÕıÈ·µÄÏìÓ¦ÄÚÈİ¡£Èç¹û¶ÏÑÔÊ§°ÜÔòÖ´ĞĞreturn 0£¬ÍË³öµ±Ç°action
-	if( strcmp(result_a,"³É¹¦") == 0)
+	//é€šè¿‡strcmpå‡½æ•°åˆ¤æ–­å“åº”å†…å®¹ï¼Œstrcmpè¿”å›0åˆ™ä¸ºçœŸï¼Œç¡®ä¿è¯¥è¯·æ±‚èƒ½è·å–æ­£ç¡®çš„å“åº”å†…å®¹ã€‚å¦‚æœæ–­è¨€å¤±è´¥åˆ™æ‰§è¡Œreturn 0ï¼Œé€€å‡ºå½“å‰action
+	if( strcmp(result_a,"æˆåŠŸ") == 0)
 	{		
 		lr_output_message("pass");
 		lr_end_transaction("bind",LR_PASS);
 	}
 	else
 	{
-		lr_output_message("failed,¶ÏÑÔÊ§°Ü");
+		lr_output_message("failed,æ–­è¨€å¤±è´¥");
 		lr_output_message(result_a);
 		lr_end_transaction("bind",LR_FAIL);
-        //return 0,1,2...Ê±,³ÌĞòÖ´ĞĞµ½´Ë´¦£¬½öÌø³öµ±Ç°Action£¬µ±Ç°ActionÖĞºóĞø´úÂë²»Ö´ĞĞ¡£
-		//return -1Ê±,³ÌĞòÖ´ĞĞµ½´Ë´¦£¬Ìø³öËùÓĞActionºÍµü´ú,µ«»áÖ´ĞĞvuser_end¡£
-		// exit(-1),ºóÖ±½ÓÖÕÖ¹µü´úÍ£Ö¹³ÌĞòÔËĞĞ£¬ºóĞø´úÂë¾ù²»Ö´ĞĞ
+        //return 0,1,2...æ—¶,ç¨‹åºæ‰§è¡Œåˆ°æ­¤å¤„ï¼Œä»…è·³å‡ºå½“å‰Actionï¼Œå½“å‰Actionä¸­åç»­ä»£ç ä¸æ‰§è¡Œã€‚
+		//return -1æ—¶,ç¨‹åºæ‰§è¡Œåˆ°æ­¤å¤„ï¼Œè·³å‡ºæ‰€æœ‰Actionå’Œè¿­ä»£,ä½†ä¼šæ‰§è¡Œvuser_endã€‚
+		// exit(-1),åç›´æ¥ç»ˆæ­¢è¿­ä»£åœæ­¢ç¨‹åºè¿è¡Œï¼Œåç»­ä»£ç å‡ä¸æ‰§è¡Œ
 		return 0;
 	}
 
